@@ -175,7 +175,7 @@ class GoodWeApi:
 
                 if code == 0 and data['data'] is not None:
                     return data['data']
-                elif code == 100001:
+                elif code == 100001 or code == 100002:
                     loginPayload = {
                         'account': self.account,
                         'pwd': self.password,
