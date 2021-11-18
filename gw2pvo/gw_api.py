@@ -41,16 +41,39 @@ class GoodWeApi:
         }
         data = self.call("v2/PowerStation/GetMonitorDetailByPowerstationId", payload)
 
-        result = {
+        hasPowerflow = data['hasPowerflow']
+        hasEnergeStatisticsCharts = data['hasEnergeStatisticsCharts']
+
+        no_meter = {
+
             'status' : 'Unknown',
+            'itemp' : 0,
             'pgrid_w' : 0,
-            'eday_kwh' : 0,
             'etotal_kwh' : 0,
             'grid_voltage' : 0,
             'pv_voltage' : 0,
             'latitude' : data['info'].get('latitude'),
-            'longitude' : data['info'].get('longitude')
-        }
+            'longitude' : data['info'].get('longitude'),
+            'eday_kwh': 0,
+            'consumptionOfLoad' : 'None',
+            'load' : 'None'
+                }
+
+        w_powerflow = {
+            'consumptionOfLoad' : float(data['energeStatisticsCharts'].get('consumptionOfLoad', 0.0)),
+            'load' : float(self.parseValue(data['powerflow'].get('load', 0), ' (W) '))
+                }
+
+        w_statistics = {
+            'eday_kwh' : float(data['energeStatisticsCharts'].get('sum', 0)),
+                }
+
+        if hasEnergeStatisticsCharts:
+          result = { **no_meter, **w_statistics }
+        if hasPowerflow:
+          result = { **result, **w_powerflow }
+        else:
+          result = no_meter
 
         count = 0
         for inverterData in data['inverter']:
@@ -59,9 +82,11 @@ class GoodWeApi:
                 result['status'] = status
                 result['pgrid_w'] += inverterData['out_pac']
                 result['grid_voltage'] += self.parseValue(inverterData['output_voltage'], 'V')
+                result['itemp'] += inverterData['tempperature']
                 result['pv_voltage'] += self.calcPvVoltage(inverterData['d'])
                 count += 1
-            result['eday_kwh'] += inverterData['eday']
+            if not hasEnergeStatisticsCharts:
+              result['eday_kwh'] += inverterData['eday']
             result['etotal_kwh'] += inverterData['etotal']
         if count > 0:
             # These values should not be the sum, but the average
@@ -71,11 +96,16 @@ class GoodWeApi:
             # We have no online inverters, then just pick the first
             inverterData = data['inverter'][0]
             result['status'] = self.statusText(inverterData['status'])
-            result['pgrid_w'] = inverterData['out_pac']
+            if hasPowerflow:
+              #result['pgrid_w'] = self.parseValue(data['powerflow'].get('pv',), ' (W) ')
+              result['pgrid_w'] = self.parseValue(data['powerflow'].get('pv'), '(W)')
+            else:
+              result['pgrid_w'] = inverterData['out_pac']
+
             result['grid_voltage'] = self.parseValue(inverterData['output_voltage'], 'V')
             result['pv_voltage'] = self.calcPvVoltage(inverterData['d'])
 
-        message = "{status}, {pgrid_w} W now, {eday_kwh} kWh today, {etotal_kwh} kWh all time, {grid_voltage} V grid, {pv_voltage} V PV".format(**result)
+        message = "{status}, {pgrid_w} W now, Load {load} W now, {eday_kwh} kWh today, {etotal_kwh} kWh all time, {consumptionOfLoad} kWh used today {grid_voltage} V grid, {pv_voltage} V PV, {itemp} C".format(**result)
         if result['status'] == 'Normal' or result['status'] == 'Offline':
             logging.info(message)
         else:
