@@ -45,7 +45,6 @@ class GoodWeApi:
         hasEnergeStatisticsCharts = data['hasEnergeStatisticsCharts']
 
         no_meter = {
-
             'status' : 'Unknown',
             'itemp' : 0,
             'pgrid_w' : 0,
@@ -97,7 +96,6 @@ class GoodWeApi:
             inverterData = data['inverter'][0]
             result['status'] = self.statusText(inverterData['status'])
             if hasPowerflow:
-              #result['pgrid_w'] = self.parseValue(data['powerflow'].get('pv',), ' (W) ')
               result['pgrid_w'] = self.parseValue(data['powerflow'].get('pv'), '(W)')
             else:
               result['pgrid_w'] = inverterData['out_pac']
