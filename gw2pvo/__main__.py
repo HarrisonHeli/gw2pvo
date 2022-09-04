@@ -56,21 +56,21 @@ def run_once(settings, city):
     global last_eday_kwh
 
     # Check if we only want to run during daylight
-    if city:
-        now = datetime.time(datetime.now())
-        if now < city.dawn().time() or now > city.dusk().time():
-            logging.debug("Skipped upload as it's night")
-            return
+    #if city:
+    #    now = datetime.time(datetime.now())
+       # if now < city.dawn().time() or now > city.dusk().time():
+       #     logging.debug("Skipped upload as it's night")
+       #     return
 
     # Fetch the last reading from GoodWe
     gw = gw_api.GoodWeApi(settings.gw_station_id, settings.gw_account, settings.gw_password)
     data = gw.getCurrentReadings()
 
     # Check if we want to abort when offline
-    if settings.skip_offline:
-        if data['status'] == 'Offline':
-            logging.debug("Skipped upload as the inverter is offline")
-            return
+    #if settings.skip_offline:
+    #    if data['status'] == 'Offline':
+    #        logging.debug("Skipped upload as the inverter is offline")
+    #        return
 
     # Append reading to CSV file
     if settings.csv:
