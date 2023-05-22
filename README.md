@@ -1,7 +1,6 @@
 
 # gw2pvo
 [![Paypal-shield]](https://www.paypal.com/donate/?business=UZ6F4WY9P5MFY&no_recurring=0&item_name=Please+donate+if+you+like+my+work.&currency_code=AUD)
-[Paypal-shield]: https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square&colorA=273133&colorB=b008bb "Paypal"
 
 gw2pvo is a command line tool to upload solar data from a GoodWe power inverter to the PVOutput.org website.
 
@@ -215,3 +214,5 @@ GoodWe API access is based on the Chinese Sems Swagger documentation: [global](h
 
 The software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the software.
 
+
+[Paypal-shield]: https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square&colorA=273133&colorB=b008bb "Paypal"
