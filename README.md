@@ -1,5 +1,7 @@
 
 # gw2pvo
+[![Paypal-shield]](https://www.paypal.com/donate/?business=UZ6F4WY9P5MFY&no_recurring=0&item_name=Please+donate+if+you+like+my+work.&currency_code=AUD)
+[Paypal-shield]: https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square&colorA=273133&colorB=b008bb "Paypal"
 
 gw2pvo is a command line tool to upload solar data from a GoodWe power inverter to the PVOutput.org website.
 
