@@ -54,8 +54,8 @@ class GoodWeApi:
             'latitude' : data['info'].get('latitude'),
             'longitude' : data['info'].get('longitude'),
             'eday_kwh': 0,
-            'consumptionOfLoad' : 'None',
-            'load' : 'None'
+            'consumptionOfLoad' : 0,
+            'load' : 0
                 }
 
         w_powerflow = {
@@ -77,7 +77,7 @@ class GoodWeApi:
         count = 0
         for inverterData in data['inverter']:
             status = self.statusText(inverterData['status'])
-            if status == 'Normal':
+            if status == 'Normal' or result['status'] == 'Offline':
                 result['status'] = status
                 result['pgrid_w'] += inverterData['out_pac']
                 result['grid_voltage'] += self.parseValue(inverterData['output_voltage'], 'V')
@@ -97,6 +97,11 @@ class GoodWeApi:
             result['status'] = self.statusText(inverterData['status'])
             if hasPowerflow:
               result['pgrid_w'] = self.parseValue(data['powerflow'].get('pv'), '(W)')
+              # This test if the house load is zero - Means the inverter has gone to sleep and all power
+              # is comming via the grid. We then use the grid value to work out what we are using at night.
+              if result['load'] <= 0:
+                  result['load'] = self.parseValue(data['powerflow'].get('grid'),'(W)')
+                  result['load'] = - result['load']
             else:
               result['pgrid_w'] = inverterData['out_pac']
 
